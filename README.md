@@ -1,3 +1,12 @@
+# Ejecutar el proyecto
+
+```bash
+cd prueba
+npm i 
+npm run dev
+```
+
+---
 
 # Guía de Aprendizaje Vue.js y Nuxt
 
