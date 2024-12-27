@@ -1,128 +1,221 @@
-# Nuxt Minimal Starter
 
-Make sure to install dependencies:
+# Guía de Aprendizaje Vue.js y Nuxt
 
+Esta guía está diseñada para ayudarte a aprender Vue.js y Nuxt de manera estructurada, comenzando desde los conceptos básicos hasta temas más avanzados.
+
+---
+
+## Configuración Inicial
+### Explicación
+Antes de comenzar, necesitamos configurar nuestro entorno de desarrollo. Nuxt.js es un framework construido sobre Vue.js que facilita la creación de aplicaciones web universales.
+
+#### Ejemplo de Código
 ```bash
-# npm
-npm install
+# Crear nuevo proyecto Nuxt
+npx create-nuxt-app mi-primer-proyecto
 
+# Estructura básica recomendada
+mi-primer-proyecto/
+  ├── pages/
+  ├── components/
+  ├── layouts/
+  ├── assets/
+  └── nuxt.config.js
 ```
 
-## Development Server
+### Ejercicio
+Crea un nuevo proyecto Nuxt y personaliza la configuración inicial según tus necesidades. Asegúrate de que puedas ejecutar el servidor de desarrollo.
 
-Start the development server on `http://localhost:3000`:
+#### Pista
+Durante la configuración, selecciona JavaScript/TypeScript según tu preferencia, y elige Tailwind CSS como framework CSS para facilitar el diseño.
 
-```bash
-# npm
-npm run dev
+---
+
+## Componentes Básicos
+### Explicación
+Los componentes son la base de Vue.js. Son elementos reutilizables que encapsulan lógica, estructura y estilos.
+
+#### Ejemplo de Código
+```vue
+<!-- components/Saludo.vue -->
+<template>
+  <div>
+    <h1>{{ mensaje }}</h1>
+    <button @click="cambiarMensaje">Cambiar Mensaje</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      mensaje: '¡Hola Vue!'
+    }
+  },
+  methods: {
+    cambiarMensaje() {
+      this.mensaje = '¡Mensaje cambiado!'
+    }
+  }
+}
+</script>
 ```
 
-## Production
+### Ejercicio
+Crea un componente de tarjeta (Card) que muestre una imagen, título y descripción. Debe tener un botón que permita "dar like" y mostrar el número de likes.
 
-Build the application for production:
+#### Pista
+Utiliza `data()` para manejar el estado del contador de likes y un método para incrementarlo.
 
-```bash
-# npm
-npm run build
+---
+
+## Composición API
+### Explicación
+La Composition API es una forma alternativa de organizar la lógica de los componentes, permitiendo mejor reutilización y organización del código.
+
+#### Ejemplo de Código
+```vue
+<!-- components/ContadorComposition.vue -->
+<template>
+  <div>
+    <p>Contador: {{ contador }}</p>
+    <button @click="incrementar">+</button>
+    <button @click="decrementar">-</button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const contador = ref(0)
+
+const incrementar = () => {
+  contador.value++
+}
+
+const decrementar = () => {
+  contador.value--
+}
+</script>
 ```
 
-Locally preview production build:
+### Ejercicio
+Crea un componente de lista de tareas (TodoList) utilizando la Composition API. Debe permitir agregar, eliminar y marcar tareas como completadas.
 
-```bash
-# npm
-npm run preview
+#### Pista
+Utiliza `ref()` para el array de tareas y `computed()` para filtrar las tareas completadas/pendientes.
+
+---
+
+## Enrutamiento en Nuxt
+### Explicación
+Nuxt proporciona un sistema de enrutamiento basado en archivos. La estructura de archivos en el directorio `pages/` determina las rutas de tu aplicación.
+
+#### Ejemplo de Código
+```vue
+<!-- pages/usuarios/[id].vue -->
+<template>
+  <div>
+    <h1>Perfil de Usuario</h1>
+    <p>ID del usuario: {{ $route.params.id }}</p>
+  </div>
+</template>
+
+<script setup>
+const route = useRoute()
+const id = route.params.id
+</script>
 ```
 
-## Cosas que se incluyen en la practica  de este proyecto
+### Ejercicio
+Crea una pequeña aplicación con tres páginas: inicio, lista de productos y detalle de producto. Implementa la navegación entre ellas usando tanto enlaces como navegación programática.
 
-### 1. **Crear un componente de contador más complejo**
-   Crea un componente que tenga dos botones:
-   - Un botón para **incrementar** el contador.
-   - Un botón para **decrementar** el contador.
-   
-   Usa `ref` para el contador y maneja las dos acciones (incrementar y decrementar).
+#### Pista
+Utiliza `<NuxtLink>` para la navegación declarativa y `navigateTo()` para la navegación programática.
 
-### 2. **Condicionales y v-if en Vue**
-   Crea un componente con un botón y un mensaje que se muestre solo si el contador es mayor a un valor específico. Ejemplo: "El contador ha superado el valor 5".
+---
 
-### 3. **Manejo de eventos y `v-model`**
-   Crea un componente que permita ingresar un número en un campo de texto (input), y que al hacer clic en un botón, actualice el contador con ese número. Usa `v-model` para el campo de texto y un botón para disparar la acción.
+## Estado Global con Pinia
+### Explicación
+Pinia es la solución recomendada para el manejo de estado global en aplicaciones Vue/Nuxt modernas.
 
-### 4. **Componentes con Props**
-   Crea dos componentes:
-   - Un componente **Padre** que pase un valor como `prop` a un componente **Hijo**.
-   - El componente Hijo debe mostrar el valor recibido y actualizarlo cuando el valor cambie.
+#### Ejemplo de Código
+```javascript
+// stores/contador.js
+import { defineStore } from 'pinia'
 
-### 5. **Mostrar y ocultar elementos con `v-show`**
-   Crea un componente donde un botón controle la visibilidad de un mensaje. Usa `v-show` para mostrar u ocultar el mensaje al hacer clic en el botón.
+export const useContadorStore = defineStore('contador', {
+  state: () => ({
+    count: 0
+  }),
+  actions: {
+    incrementar() {
+      this.count++
+    },
+    decrementar() {
+      this.count--
+    }
+  },
+  getters: {
+    counterValue: (state) => state.count
+  }
+})
+```
 
-### 6. **Crear un temporizador (contador de tiempo)**
-   Crea un componente que simule un temporizador que cuente en segundos desde que el componente es montado. Usa `setInterval` para actualizar el contador cada segundo y muestra el tiempo transcurrido.
+### Ejercicio
+Implementa un carrito de compras usando Pinia. Debe permitir agregar/quitar productos y calcular el total.
 
-### 7. **Manejo de listas con `v-for`**
-   Crea un componente que muestre una lista de números y un botón para agregar un nuevo número al final de la lista. Cada vez que se haga clic en el botón, un nuevo número (por ejemplo, el número de la lista + 1) debe ser agregado a la lista.
+#### Pista
+Define un store con un array de productos, métodos para manipular el carrito y getters para calcular totales.
 
-### 8. **Formulario de registro básico**
-   Crea un formulario con los siguientes campos:
-   - Nombre
-   - Email
-   - Contraseña
-   
-   Cuando el formulario sea enviado, valida que los campos no estén vacíos y muestra un mensaje de éxito o error.
+---
 
-### 9. **Transiciones entre elementos**
-   Crea un componente con una lista de elementos y un botón que agregue o elimine elementos de la lista. Usa las transiciones de Vue (`<transition>`) para animar la entrada y salida de los elementos.
+## Consumo de APIs
+### Explicación
+Nuxt proporciona utilidades para realizar peticiones HTTP de manera eficiente.
 
-### 10. **Filtrar una lista**
-   Crea un componente que contenga una lista de nombres y un campo de búsqueda. A medida que el usuario escribe en el campo de búsqueda, la lista debe filtrarse para mostrar solo los nombres que contienen el texto ingresado.
+#### Ejemplo de Código
+```vue
+<script setup>
+const { data: posts } = await useFetch('https://api.ejemplo.com/posts')
+</script>
 
-### 11. **Modal con `v-if`**
-   Crea un componente de modal que se muestre y oculte al hacer clic en un botón. Usa `v-if` para mostrar el modal y `v-on:click` para manejar los clics fuera del modal y cerrarlo.
+<template>
+  <div>
+    <article v-for="post in posts" :key="post.id">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.body }}</p>
+    </article>
+  </div>
+</template>
+```
 
-### 12. **Actualizar un valor mediante `v-model` en un formulario**
-   Crea un formulario que tenga un `input` de texto para editar un valor. Usa `v-model` para enlazar el valor del campo con una variable en el `script` y muéstralo en otra parte del componente mientras se edita.
+### Ejercicio
+Crea una página que muestre una lista de usuarios consumiendo la API de JSONPlaceholder. Implementa paginación y búsqueda.
 
-### 13. **Mostrar el tiempo actual en formato de 12 horas**
-   Crea un componente que muestre la hora actual en formato de 12 horas (AM/PM). Puedes usar `Date` para obtener la hora y formatearla. Haz que el reloj se actualice cada segundo con `setInterval`.
+#### Pista
+Utiliza `useFetch` con parámetros de query para la paginación y búsqueda. Maneja los estados de carga y error.
 
-### 14. **Simular una lista de productos y un carrito de compras**
-   Crea una lista de productos (con nombre y precio) y un carrito de compras. Permite al usuario agregar productos al carrito y muestra el total del precio de los productos en el carrito.
+---
 
-### 15. **Crear un componente de "To-Do List"**
-   Crea una lista de tareas pendientes (To-Do) donde puedas:
-   - Agregar tareas.
-   - Marcar tareas como completadas.
-   - Eliminar tareas.
-   
-   Guarda las tareas en un array y actualiza la lista de forma dinámica.
+## Middleware y Autenticación
+### Explicación
+Los middleware permiten ejecutar código antes de renderizar una página o grupo de páginas.
 
-### 16. **Manejo de temas (modo oscuro / claro)**
-   Crea un botón para cambiar entre modo oscuro y modo claro. Usa clases CSS o `v-bind:class` para aplicar el tema correspondiente a la página.
+#### Ejemplo de Código
+```javascript
+// middleware/auth.js
+export default defineNuxtRouteMiddleware((to, from) => {
+  const isAuthenticated = useState('auth').value
+  
+  if (!isAuthenticated && to.path !== '/login') {
+    return navigateTo('/login')
+  }
+})
+```
 
-### 17. **Reloj con zona horaria**
-   Crea un componente que muestre la hora en diferentes zonas horarias (por ejemplo, hora en Nueva York, Londres y Tokio). Usa la API de `Intl.DateTimeFormat` o `Date` para mostrar las horas.
+### Ejercicio
+Implementa un sistema de autenticación básico con login/logout y protección de rutas.
 
-### 18. **Mostrar una lista de usuarios con paginación**
-   Crea un componente que obtenga una lista de usuarios desde una API (puedes usar una API pública como JSONPlaceholder) y los muestre paginados. Implementa botones para avanzar y retroceder entre las páginas de usuarios.
-
-### 19. **Ejercicio de validación de formulario**
-   Crea un formulario donde el usuario deba ingresar su nombre, correo y un número de teléfono. Agrega validaciones para cada campo (como formato de correo y longitud del teléfono) y muestra un mensaje si hay errores.
-
-### 20. **Control de visibilidad con un temporizador**
-   Crea un componente que muestre un mensaje durante 5 segundos y luego lo oculte automáticamente. Usa `setTimeout` para controlar la visibilidad del mensaje.
-
-### 21. **Cargar imágenes y mostrar un "loader"**
-   Crea un componente que cargue una imagen desde una URL y muestre un "loader" (por ejemplo, un spinner) mientras la imagen se está cargando. Cuando la imagen esté lista, muestra la imagen y oculta el loader.
-
-### 22. **Crear un contador con límite máximo**
-   Crea un contador que se incremente cada vez que el usuario haga clic en un botón. Sin embargo, cuando el contador llegue a un valor máximo (por ejemplo, 10), el botón se desactivará y el contador dejará de incrementarse.
-
-### 23. **Cargar y mostrar datos de una API externa**
-   Crea un componente que haga una solicitud HTTP a una API externa (por ejemplo, obteniendo información del clima) y muestre los datos en la interfaz. Usa `fetch` o `axios` para realizar la solicitud.
-
-### 24. **Animación con `@keyframes`**
-   Crea un componente que utilice una animación CSS con `@keyframes` para animar un elemento cuando el usuario haga clic en un botón (por ejemplo, cambiar el color o el tamaño de un elemento).
-
-### 25. **Control de estado con `provide` y `inject`**
-   Crea un componente de formulario que use `provide` en el componente principal y `inject` en los componentes secundarios para compartir datos entre ellos sin tener que pasar las propiedades manualmente.
-
+#### Pista
+Usa `useState` para mantener el estado de autenticación y aplica el middleware a las rutas protegidas.
